@@ -469,7 +469,7 @@ lugar de resolverlo.
 
 ## Autor y agradecimientos
 
-**Hildebrando Peña Quintero** — Escuela Colombiana de Ingeniería Julio Garavito,
+**Hildebrando Peña Quezada** — Escuela Colombiana de Ingeniería Julio Garavito,
 Arquitecturas Empresariales (AREP).
 GitHub: [@brandoeci](https://github.com/brandoeci) ·
 Correo: hildebrando.pena-q@mail.escuelaing.edu.co
