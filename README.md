@@ -470,7 +470,7 @@ lugar de resolverlo.
 ## Autor y agradecimientos
 
 **Hildebrando Peña Quezada** — Escuela Colombiana de Ingeniería Julio Garavito,
-Arquitecturas Empresariales (AREP).
+Taller de Desarrollo de Software Empresarial (TDSE).
 GitHub: [@brandoeci](https://github.com/brandoeci) ·
 Correo: hildebrando.pena-q@mail.escuelaing.edu.co
 
