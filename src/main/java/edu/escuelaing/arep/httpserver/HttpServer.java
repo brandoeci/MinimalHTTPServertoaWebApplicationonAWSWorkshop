@@ -28,16 +28,18 @@ public class HttpServer {
 
     private final int port;
     private final StaticFiles staticFiles;
+    private final Services services;
     private volatile boolean running;
     private ServerSocket serverSocket;
 
     public HttpServer(int port) {
-        this(port, new StaticFiles());
+        this(port, new StaticFiles(), new Services());
     }
 
-    public HttpServer(int port, StaticFiles staticFiles) {
+    public HttpServer(int port, StaticFiles staticFiles, Services services) {
         this.port = port;
         this.staticFiles = staticFiles;
+        this.services = services;
     }
 
     public static void main(String[] args) throws IOException {
@@ -144,22 +146,61 @@ public class HttpServer {
     }
 
     /**
-     * Routing: only GET is accepted, and every path refers to a public resource.
-     * The hardcoded services are added in the next step.
+     * Routing, deliberately hardcoded: one explicit condition per special URL and
+     * everything else is a public resource.
+     *
+     * <p>No framework, no reflection, no annotations, no router table. A routing
+     * framework would eventually generalise exactly these five conditions, which
+     * is why they are written out here in full.</p>
      */
-    private HttpResponse route(HttpRequest request) throws HttpException {
+    HttpResponse route(HttpRequest request) throws HttpException {
         if (!"GET".equals(request.getMethod())) {
             throw HttpException.methodNotAllowed(request.getMethod());
         }
-        return staticFiles.read(request.getPath());
+
+        String path = request.getPath();
+        if (path.equals("/app/hello")) {
+            return services.greeting(request);
+        }
+        if (path.equals("/app/square")) {
+            return services.square(request);
+        }
+        if (path.equals("/app/time")) {
+            return services.serverTime();
+        }
+        if (path.equals("/app/slow")) {
+            return services.slow(request);
+        }
+        if (path.equals("/health")) {
+            return services.health();
+        }
+        return staticFiles.read(path);
     }
 
+    /**
+     * Builds the error response. A failing service answers JSON, because its
+     * caller is the JavaScript client; anything else answers a small HTML page,
+     * because its caller is the browser address bar.
+     */
     private HttpResponse errorResponse(int status, String message, HttpRequest request) {
         String reason = HttpResponse.reason(status);
-        HttpResponse response = HttpResponse.html(status,
-                "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>" + status + " " + reason
-                        + "</title></head><body><h1>" + status + " " + reason + "</h1><p>"
-                        + escapeHtml(message) + "</p></body></html>");
+        String path = request == null ? "" : request.getPath();
+        boolean serviceCall = path.startsWith("/app/") || path.equals("/health");
+
+        HttpResponse response;
+        if (serviceCall) {
+            response = HttpResponse.json(status, Json.object()
+                    .put("error", reason)
+                    .put("status", status)
+                    .put("message", message)
+                    .build());
+        } else {
+            response = HttpResponse.html(status,
+                    "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>" + status + " " + reason
+                            + "</title></head><body><h1>" + status + " " + reason + "</h1><p>"
+                            + escapeHtml(message) + "</p><p><a href=\"/\">Back to the home page</a></p>"
+                            + "</body></html>");
+        }
         if (status == 405) {
             response.header("Allow", "GET");
         }
