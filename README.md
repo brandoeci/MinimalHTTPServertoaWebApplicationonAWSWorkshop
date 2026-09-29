@@ -151,7 +151,7 @@ línea de comandos, o de la variable de entorno `PORT`, o queda en 35000.
 ## Estructura del proyecto
 
 ```
-arep-minihttp-server/
+MinimalHTTPServertoaWebApplicationonAWSWorkshop/
 ├── pom.xml                        Descriptor Maven (Java 17, JUnit 5, jar ejecutable)
 ├── README.md
 ├── .gitignore
@@ -214,8 +214,8 @@ mvn -version
 ## Instalación y construcción
 
 ```bash
-git clone <URL-del-repositorio>
-cd arep-minihttp-server
+git clone https://github.com/brandoeci/MinimalHTTPServertoaWebApplicationonAWSWorkshop.git
+cd MinimalHTTPServertoaWebApplicationonAWSWorkshop
 
 mvn clean package          # descarga dependencias, compila, corre las pruebas y empaqueta
 ```
@@ -469,8 +469,10 @@ lugar de resolverlo.
 
 ## Autor y agradecimientos
 
-**Hildebrando P. Q.** — Escuela Colombiana de Ingeniería Julio Garavito,
+**Hildebrando Peña Quintero** — Escuela Colombiana de Ingeniería Julio Garavito,
 Arquitecturas Empresariales (AREP).
+GitHub: [@brandoeci](https://github.com/brandoeci) ·
+Correo: hildebrando.pena-q@mail.escuelaing.edu.co
 
 Material y referencias usadas:
 
