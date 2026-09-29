@@ -1,0 +1,21 @@
+Browser network list captured while using the page (Chromium, DevTools > Network)
+Local run on http://localhost:35000/
+
+ #  Method  URL                                      Status  Type
+ 1  GET     /                                        200     text/html
+ 2  GET     /styles.css                              200     text/css
+ 3  GET     /img/logo.png                            200     image/png
+ 4  GET     /img/photo.jpg                           200     image/jpeg
+ 5  GET     /app.js                                  200     application/javascript
+ 6  GET     /img/favicon.png                         200     image/png
+ 7  GET     /app/hello?name=Hildebrando              200     application/json
+ 8  GET     /app/square?value=12.5                   200     application/json
+ 9  GET     /app/time                                200     application/json
+10  GET     /app/square?value=cuarenta               400     application/json
+11  GET     /app/square?value=12.5                   200     application/json
+12  GET     /app/time                                200     application/json
+
+Requests 1 to 6 come from loading one single page: the browser asked for the
+document first and then discovered the stylesheet, the script, the images and
+the icon inside it. Requests 7 to 12 were sent by app.js with fetch(), without
+reloading the page.

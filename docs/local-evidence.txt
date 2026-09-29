@@ -1,0 +1,153 @@
+Evidence of the local run - minihttp-server
+Captured on: 2026-09-29 15:33:12 HPS
+Artifact: target/minihttp-server.jar started with: java -jar minihttp-server.jar 35000
+Public resources read from: classpath:/public/ (inside the jar)
+
+==========================================================
+1. STATIC RESOURCES
+==========================================================
+$ curl -i http://localhost:35000/
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+Content-Length: 3280
+
+$ curl -i http://localhost:35000/styles.css
+HTTP/1.1 200 OK
+Content-Type: text/css; charset=utf-8
+Content-Length: 2694
+
+$ curl -i http://localhost:35000/app.js
+HTTP/1.1 200 OK
+Content-Type: application/javascript; charset=utf-8
+Content-Length: 6193
+
+$ curl -i http://localhost:35000/img/logo.png
+HTTP/1.1 200 OK
+Content-Type: image/png
+Content-Length: 5918
+
+$ curl -i http://localhost:35000/img/photo.jpg
+HTTP/1.1 200 OK
+Content-Type: image/jpeg
+Content-Length: 18747
+
+$ curl -i http://localhost:35000/img/favicon.png
+HTTP/1.1 200 OK
+Content-Type: image/png
+Content-Length: 1002
+
+==========================================================
+2. HARDCODED SERVICES - VALID REQUESTS
+==========================================================
+$ curl -i 'http://localhost:35000/app/hello?name=Ana%20Mar%C3%ADa'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+{"service":"greeting","name":"Ana María","greeting":"Hello, Ana María!"}
+
+$ curl -i 'http://localhost:35000/app/square?value=7'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+{"service":"square","value":7,"square":49}
+
+$ curl -i 'http://localhost:35000/app/square?value=-2.5'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+{"service":"square","value":-2.5,"square":6.25}
+
+$ curl -i 'http://localhost:35000/app/time'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+{"service":"time","iso":"2026-09-29T15:33:13.1536758-05:00","zone":"America/Bogota","epochMillis":1790713993153}
+
+$ curl -i 'http://localhost:35000/health'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+{"status":"UP","uptimeMillis":27752}
+
+==========================================================
+3. HARDCODED SERVICES - INVALID REQUESTS
+==========================================================
+$ curl -i 'http://localhost:35000/app/hello'
+HTTP/1.1 400 Bad Request
+Content-Type: application/json; charset=utf-8
+{"error":"Bad Request","status":400,"message":"Missing required query parameter 'name'"}
+
+$ curl -i 'http://localhost:35000/app/hello?name=%20'
+HTTP/1.1 400 Bad Request
+Content-Type: application/json; charset=utf-8
+{"error":"Bad Request","status":400,"message":"Missing required query parameter 'name'"}
+
+$ curl -i 'http://localhost:35000/app/square'
+HTTP/1.1 400 Bad Request
+Content-Type: application/json; charset=utf-8
+{"error":"Bad Request","status":400,"message":"Missing required query parameter 'value'"}
+
+$ curl -i 'http://localhost:35000/app/square?value=hola'
+HTTP/1.1 400 Bad Request
+Content-Type: application/json; charset=utf-8
+{"error":"Bad Request","status":400,"message":"'hola' is not a number"}
+
+$ curl -i 'http://localhost:35000/app/square?value=NaN'
+HTTP/1.1 400 Bad Request
+Content-Type: application/json; charset=utf-8
+{"error":"Bad Request","status":400,"message":"The value must be a finite number"}
+
+$ curl -i 'http://localhost:35000/app/slow?millis=999999'
+HTTP/1.1 400 Bad Request
+Content-Type: application/json; charset=utf-8
+{"error":"Bad Request","status":400,"message":"The delay must be between 0 and 20000 milliseconds"}
+
+==========================================================
+4. CONTROLLED ERRORS
+==========================================================
+$ curl -i http://localhost:35000/no-such-file.html   (missing static file)
+HTTP/1.1 404 Not Found
+Content-Type: text/html; charset=utf-8
+
+$ curl -i -X POST http://localhost:35000/            (unsupported method)
+HTTP/1.1 405 Method Not Allowed
+Content-Type: text/html; charset=utf-8
+Allow: GET
+
+$ curl -i --path-as-is http://localhost:35000/../pom.xml   (path traversal)
+HTTP/1.1 403 Forbidden
+Content-Type: text/html; charset=utf-8
+
+$ curl -i --path-as-is 'http://localhost:35000/img/%2e%2e/%2e%2e/pom.xml'   (encoded traversal)
+HTTP/1.1 403 Forbidden
+
+$ curl -i http://localhost:35000/.gitignore          (hidden file)
+HTTP/1.1 403 Forbidden
+
+$ printf 'NOT AN HTTP REQUEST\r\n\r\n' | nc localhost 35000   (malformed request)
+HTTP/1.1 400 Bad Request
+(the server answered and kept running: the next request still works)
+next request -> HTTP 200
+
+==========================================================
+5. TEN CONSECUTIVE REQUESTS IN ONE SERVER RUN
+==========================================================
+GET /app/square?value=1 -> HTTP 200 in 0.001589s
+GET /app/square?value=2 -> HTTP 200 in 0.001227s
+GET /app/square?value=3 -> HTTP 200 in 0.001346s
+GET /app/square?value=4 -> HTTP 200 in 0.001253s
+GET /app/square?value=5 -> HTTP 200 in 0.001286s
+GET /app/square?value=6 -> HTTP 200 in 0.016362s
+GET /app/square?value=7 -> HTTP 200 in 0.001439s
+GET /app/square?value=8 -> HTTP 200 in 0.001741s
+GET /app/square?value=9 -> HTTP 200 in 0.001343s
+GET /app/square?value=10 -> HTTP 200 in 0.023779s
+
+==========================================================
+6. THE SEQUENTIAL LIMITATION (section 6.2)
+==========================================================
+Two clients ask at the same time: A calls the slow service, B calls /app/time
+right after. B has to wait until A finishes, even though both were launched
+within the same 200 ms.
+
+A  GET /app/slow?millis=5000 -> HTTP 200  started at +0.0s  total 5.003185s
+B  GET /app/time            -> HTTP 200  started at +0.3s  total 4.673475s
+
+B normally answers in a few milliseconds (see section 2). Here it took about
+as long as A was still sleeping: the accept loop could not take B until A was
+done. The browser stayed responsive, but the server did not become concurrent.
