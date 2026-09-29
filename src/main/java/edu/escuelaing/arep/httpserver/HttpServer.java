@@ -72,16 +72,33 @@ public class HttpServer {
         return serverSocket == null ? port : serverSocket.getLocalPort();
     }
 
-    /** Binds the listening socket and serves connections until {@link #stop()} is called. */
-    public void start() throws IOException {
-        // Binding without an address means every interface, so the instance is
-        // reachable from outside the machine once the firewall allows the port.
+    /**
+     * Opens the listening socket.
+     *
+     * <p>Binding without an address means every interface, so the instance is
+     * reachable from outside the machine once the firewall allows the port.</p>
+     *
+     * @return the port that was actually bound
+     */
+    public int bind() throws IOException {
         serverSocket = new ServerSocket(port);
         running = true;
         System.out.println("minihttp-server listening on http://0.0.0.0:" + getBoundPort());
         System.out.println("Sequential mode: one connection at a time.");
         System.out.println("Public resources: " + staticFiles.describeSource());
+        return getBoundPort();
+    }
 
+    /** Binds if needed and serves connections until {@link #stop()} is called. */
+    public void start() throws IOException {
+        if (serverSocket == null) {
+            bind();
+        }
+        acceptLoop();
+    }
+
+    /** The whole server: accept one connection, serve it, close it, accept the next. */
+    public void acceptLoop() {
         while (running) {
             try {
                 Socket client = serverSocket.accept();
