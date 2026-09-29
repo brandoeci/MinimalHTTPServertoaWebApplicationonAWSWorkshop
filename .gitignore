@@ -1,0 +1,64 @@
+# ---- Maven / build output ----
+target/
+build/
+dist/
+*.class
+*.jar
+*.war
+*.ear
+!.mvn/wrapper/maven-wrapper.jar
+dependency-reduced-pom.xml
+pom.xml.versionsBackup
+
+# ---- IDE / editor metadata ----
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+.factorypath
+nbproject/
+nb-configuration.xml
+*.swp
+*~
+
+# ---- Operating system metadata ----
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# ---- Logs / temp ----
+logs/
+*.log
+*.tmp
+*.bak
+hs_err_pid*
+replay_pid*
+
+# ---- Secrets, keys and local cloud configuration (never commit) ----
+.env
+.env.*
+*.pem
+*.ppk
+*.key
+*.p12
+*.jks
+*.keystore
+id_rsa*
+id_ed25519*
+.aws/
+aws-credentials*
+credentials
+*.credentials
+*_rsa
+*.crt
+secrets/
