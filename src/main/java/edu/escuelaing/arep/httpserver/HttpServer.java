@@ -15,8 +15,8 @@ import java.nio.charset.StandardCharsets;
  * accepted one after another. Each client socket is fully served and closed
  * before the next connection is accepted.
  *
- * <p>There is no thread, executor or queue anywhere in this class. That is the
- * point of the laboratory: the limit must stay visible.</p>
+ * <p>No thread, executor or queue is used anywhere in this class: the lab asks
+ * for that limit to stay visible.</p>
  */
 public class HttpServer {
 
@@ -166,9 +166,8 @@ public class HttpServer {
      * Routing, deliberately hardcoded: one explicit condition per special URL and
      * everything else is a public resource.
      *
-     * <p>No framework, no reflection, no annotations, no router table. A routing
-     * framework would eventually generalise exactly these five conditions, which
-     * is why they are written out here in full.</p>
+     * <p>No framework, no reflection, no router table. A framework would end up
+     * generalising exactly these five conditions, so they are written out here.</p>
      */
     HttpResponse route(HttpRequest request) throws HttpException {
         if (!"GET".equals(request.getMethod())) {

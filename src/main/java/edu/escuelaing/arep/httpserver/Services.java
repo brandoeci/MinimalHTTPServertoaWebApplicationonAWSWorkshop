@@ -108,9 +108,8 @@ public class Services {
     /**
      * {@code GET /app/slow?millis=5000} - sleeps before answering.
      *
-     * <p>Used in section 6.2: while this request is being served, the accept loop
-     * is not accepting anything else. Sleeping is not concurrency; it is the
-     * absence of it made visible.</p>
+     * <p>Used in section 6.2: while this request is being served the accept loop
+     * is not accepting anything else. Sleeping is not concurrency.</p>
      *
      * @throws HttpException 400 when the delay is not a number or is out of range
      */

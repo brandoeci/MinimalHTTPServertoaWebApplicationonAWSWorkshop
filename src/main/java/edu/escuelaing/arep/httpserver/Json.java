@@ -34,8 +34,8 @@ public final class Json {
                 case '\t' -> out.append("\\t");
                 case '\b' -> out.append("\\b");
                 case '\f' -> out.append("\\f");
-                // '<' and '/' are escaped as well so a response can never be
-                // mistaken for markup if it is ever embedded in a page.
+                // '<', '>' and '&' are escaped too, so a value can never be read
+                // as markup if the JSON ends up inside a page.
                 case '<' -> out.append("\\u003c");
                 case '>' -> out.append("\\u003e");
                 case '&' -> out.append("\\u0026");
