@@ -79,6 +79,10 @@ code {
   font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
 }
 
+a {
+  color: var(--accent);
+}
+
 .services {
   display: grid;
   gap: 16px;

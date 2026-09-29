@@ -1,0 +1,26 @@
+[Unit]
+Description=minihttp-server (sequential HTTP server, AREP lab)
+Documentation=https://github.com/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/opt/minihttp
+# The port is configuration, not code: change it here and restart the service.
+Environment=PORT=35000
+# The public resources travel inside the jar, so only one file has to be copied.
+ExecStart=/usr/bin/java -jar /opt/minihttp/minihttp-server.jar
+Restart=on-failure
+RestartSec=5
+# systemd creates /var/log/minihttp and both streams are appended to one log.
+LogsDirectory=minihttp
+StandardOutput=append:/var/log/minihttp/server.log
+StandardError=append:/var/log/minihttp/server.log
+# The service only needs to read its own directory.
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

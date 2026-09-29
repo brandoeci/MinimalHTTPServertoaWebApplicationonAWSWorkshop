@@ -81,8 +81,13 @@ async function askForTime() {
 }
 
 async function askForSlowResponse() {
+  const millis = document.getElementById("millis").value.trim();
+  if (millis === "") {
+    showError("Type how many milliseconds the server should sleep.");
+    return;
+  }
   await run("Running a slow request (the server is busy)",
-    serviceUrl("/app/slow", { millis: 5000 }),
+    serviceUrl("/app/slow", { millis }),
     (data) => `The server slept ${data.elapsedMillis} ms.\n${data.note}`);
 }
 

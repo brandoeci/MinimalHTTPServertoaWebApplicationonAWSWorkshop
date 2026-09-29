@@ -213,10 +213,18 @@ public class HttpServer {
                     .build());
         } else {
             response = HttpResponse.html(status,
-                    "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>" + status + " " + reason
-                            + "</title></head><body><h1>" + status + " " + reason + "</h1><p>"
-                            + escapeHtml(message) + "</p><p><a href=\"/\">Back to the home page</a></p>"
-                            + "</body></html>");
+                    "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\">"
+                            + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+                            + "<title>" + status + " " + reason + "</title>"
+                            + "<style>body{margin:0;min-height:100vh;display:flex;align-items:center;"
+                            + "justify-content:center;background:#0f172a;color:#e5ecff;"
+                            + "font-family:'Segoe UI',system-ui,sans-serif}"
+                            + "div{max-width:34rem;padding:28px 32px;border:1px solid #27324f;"
+                            + "border-radius:12px;background:#16203a}"
+                            + "h1{margin:0 0 8px;font-size:1.6rem}p{color:#94a3b8}"
+                            + "a{color:#38bdf8}</style></head><body><div><h1>" + status + " " + reason
+                            + "</h1><p>" + escapeHtml(message) + "</p>"
+                            + "<p><a href=\"/\">Back to the home page</a></p></div></body></html>");
         }
         if (status == 405) {
             response.header("Allow", "GET");

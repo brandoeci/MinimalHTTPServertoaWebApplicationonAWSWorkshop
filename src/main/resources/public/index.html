@@ -50,9 +50,11 @@
 
         <div class="card">
           <h3>Slow service</h3>
-          <p><code>GET /app/slow?millis=5000</code> &mdash; open a second window and
+          <p><code>GET /app/slow?millis=...</code> &mdash; open a second window and
             call another service while this one runs.</p>
-          <button type="button" id="slow-button">Run a 5 s request</button>
+          <label for="millis">Delay in milliseconds</label>
+          <input id="millis" type="text" inputmode="numeric" autocomplete="off" value="5000">
+          <button type="button" id="slow-button">Run the slow request</button>
         </div>
       </div>
 
