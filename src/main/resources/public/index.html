@@ -15,9 +15,51 @@
       <p class="lead">
         This page, its stylesheet, its script and both images were served by a Java
         server built on plain sockets. Each one of them was a separate HTTP request,
-        answered one after another.
+        answered one after another. The buttons below call the server's services
+        asynchronously: the page is never reloaded.
       </p>
     </header>
+
+    <section>
+      <h2>Services</h2>
+      <div class="services">
+        <form class="card" id="greeting-form" novalidate>
+          <h3>Greeting</h3>
+          <p><code>GET /app/hello?name=...</code></p>
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" autocomplete="off" placeholder="Ana" maxlength="60">
+          <button type="submit">Ask for a greeting</button>
+        </form>
+
+        <form class="card" id="square-form" novalidate>
+          <h3>Square</h3>
+          <p><code>GET /app/square?value=...</code></p>
+          <label for="value">Number</label>
+          <!-- Deliberately a text field: invalid input must reach the server so its
+               400 response can be turned into a friendly message. -->
+          <input id="value" name="value" type="text" inputmode="decimal" autocomplete="off" placeholder="7">
+          <button type="submit">Compute the square</button>
+        </form>
+
+        <div class="card">
+          <h3>Server time</h3>
+          <p><code>GET /app/time</code></p>
+          <button type="button" id="time-button">Read the server clock</button>
+          <p class="status" id="clock-note"></p>
+        </div>
+
+        <div class="card">
+          <h3>Slow service</h3>
+          <p><code>GET /app/slow?millis=5000</code> &mdash; open a second window and
+            call another service while this one runs.</p>
+          <button type="button" id="slow-button">Run a 5 s request</button>
+        </div>
+      </div>
+
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+      <pre id="result" hidden></pre>
+      <p id="error" role="alert" hidden></p>
+    </section>
 
     <section>
       <h2>Static resources on this page</h2>
@@ -33,6 +75,7 @@
 
     <footer>
       <p id="script-status">JavaScript has not run yet.</p>
+      <p>Health check: <a href="/health">/health</a></p>
     </footer>
   </main>
 
