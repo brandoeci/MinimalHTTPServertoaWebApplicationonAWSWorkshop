@@ -27,11 +27,17 @@ public class HttpServer {
     private static final int CLIENT_READ_TIMEOUT_MS = 15_000;
 
     private final int port;
+    private final StaticFiles staticFiles;
     private volatile boolean running;
     private ServerSocket serverSocket;
 
     public HttpServer(int port) {
+        this(port, new StaticFiles());
+    }
+
+    public HttpServer(int port, StaticFiles staticFiles) {
         this.port = port;
+        this.staticFiles = staticFiles;
     }
 
     public static void main(String[] args) throws IOException {
@@ -72,6 +78,7 @@ public class HttpServer {
         running = true;
         System.out.println("minihttp-server listening on http://0.0.0.0:" + getBoundPort());
         System.out.println("Sequential mode: one connection at a time.");
+        System.out.println("Public resources: " + staticFiles.describeSource());
 
         while (running) {
             try {
@@ -137,17 +144,14 @@ public class HttpServer {
     }
 
     /**
-     * Placeholder routing: every path answers the same page for now. Static
-     * resources and the hardcoded services are added in the next steps.
+     * Routing: only GET is accepted, and every path refers to a public resource.
+     * The hardcoded services are added in the next step.
      */
     private HttpResponse route(HttpRequest request) throws HttpException {
         if (!"GET".equals(request.getMethod())) {
             throw HttpException.methodNotAllowed(request.getMethod());
         }
-        return HttpResponse.html(200, "<!DOCTYPE html><html><head><meta charset=\"utf-8\">"
-                + "<title>minihttp-server</title></head><body>"
-                + "<h1>Request received</h1><p>Path: " + escapeHtml(request.getPath()) + "</p>"
-                + "</body></html>");
+        return staticFiles.read(request.getPath());
     }
 
     private HttpResponse errorResponse(int status, String message, HttpRequest request) {

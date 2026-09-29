@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>minihttp-server</title>
+  <link rel="icon" href="/img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="page">
+    <header>
+      <img src="/img/logo.png" alt="minihttp-server" width="480" height="200" class="logo">
+      <h1>Sequential HTTP server</h1>
+      <p class="lead">
+        This page, its stylesheet, its script and both images were served by a Java
+        server built on plain sockets. Each one of them was a separate HTTP request,
+        answered one after another.
+      </p>
+    </header>
+
+    <section>
+      <h2>Static resources on this page</h2>
+      <ul class="resources">
+        <li><code>/index.html</code> &rarr; <span>text/html</span></li>
+        <li><code>/styles.css</code> &rarr; <span>text/css</span></li>
+        <li><code>/app.js</code> &rarr; <span>application/javascript</span></li>
+        <li><code>/img/logo.png</code> &rarr; <span>image/png</span></li>
+        <li><code>/img/photo.jpg</code> &rarr; <span>image/jpeg</span></li>
+      </ul>
+      <img src="/img/photo.jpg" alt="One request at a time" width="480" height="300" class="photo">
+    </section>
+
+    <footer>
+      <p id="script-status">JavaScript has not run yet.</p>
+    </footer>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
